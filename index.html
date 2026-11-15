@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#202943">
+<title>Member Archive · 成员档案馆</title>
+<style>
+:root{
+  --night:#202943;--night2:#303b5a;--cream:#f3e8d8;--paper:#f8efe3;
+  --ink:#35405d;--muted:#827b7a;--gold:#c9a978;--line:#d8c5a9;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;color:var(--ink);font-family:"Noto Serif SC","Songti SC",Georgia,serif;
+  background:
+    radial-gradient(ellipse at 50% 8%,rgba(250,225,194,.34),transparent 30%),
+    radial-gradient(ellipse at 12% 38%,rgba(130,155,202,.22),transparent 28%),
+    radial-gradient(ellipse at 88% 70%,rgba(130,155,202,.18),transparent 30%),
+    linear-gradient(145deg,#1c263f,#303b5a 52%,#202943);
+  min-height:100vh;overflow-x:hidden;
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.65;
+  background-image:
+    radial-gradient(2px 2px at 8% 13%,#fff 50%,transparent 60%),
+    radial-gradient(1px 1px at 19% 72%,#f4dfbd 50%,transparent 60%),
+    radial-gradient(2px 2px at 38% 22%,#fff 50%,transparent 60%),
+    radial-gradient(1px 1px at 62% 14%,#fff 50%,transparent 60%),
+    radial-gradient(2px 2px at 82% 42%,#f4dfbd 50%,transparent 60%),
+    radial-gradient(1px 1px at 92% 82%,#fff 50%,transparent 60%);
+  background-size:260px 220px,310px 270px,350px 300px,280px 240px,330px 290px,250px 260px;
+}
+header{
+  min-height:320px;padding:25px clamp(18px,5vw,72px) 36px;position:relative;overflow:hidden;
+  color:#f7ead8;border-bottom:1px solid rgba(220,194,153,.65);
+  background:
+    linear-gradient(90deg,rgba(25,34,56,.93),rgba(35,47,74,.52) 55%,rgba(25,34,56,.85)),
+    radial-gradient(ellipse at 72% 100%,#e8d2b0 0,rgba(188,176,184,.45) 13%,transparent 37%);
+}
+header:after{
+  content:"✧     ⋆        ✦       ˚       ✧        ⋆     ✦";
+  position:absolute;inset:auto 0 18px;text-align:center;color:#f7e7c9;
+  letter-spacing:clamp(8px,3vw,35px);font-size:18px;opacity:.8;pointer-events:none
+}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;position:relative;z-index:1}
+.brand{letter-spacing:4px;font-size:13px;color:#e8d6bb}
+.nav{display:flex;gap:22px;font-size:14px}
+.nav a{color:#f5e9d9;text-decoration:none;opacity:.9}
+.hero{max-width:1180px;margin:48px auto 0;display:flex;align-items:flex-end;justify-content:space-between;gap:25px;position:relative;z-index:1}
+.hero h1{font-weight:400;letter-spacing:5px;font-size:clamp(38px,7vw,76px);line-height:.98;margin:0;text-shadow:0 2px 20px #d7c7b5}
+.hero .subtitle{margin:18px 0 0;color:#e8d8c5;letter-spacing:3px;font-size:14px}
+.hero-stats{display:flex;gap:24px;margin-top:25px;color:#e9dccb;font-size:13px}
+.hero-stats strong{display:block;font-size:22px;font-weight:400;margin-top:5px}
+.signature{font-size:clamp(30px,5vw,58px);font-style:italic;color:#e8d6bd;white-space:nowrap;text-shadow:0 0 20px #e8d6bd}
+main{max-width:1240px;margin:-1px auto 0;padding:0 clamp(12px,3vw,34px) 34px}
+.tabs{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:16px 0 20px;border-bottom:1px solid rgba(218,193,155,.55)}
+.tab{
+  border:1px solid rgba(219,194,157,.55);background:rgba(28,38,62,.66);color:#f1e3d0;
+  border-radius:28px;padding:10px 19px;font:inherit;font-size:14px;cursor:pointer;transition:.2s
+}
+.tab:hover,.tab.active{background:var(--cream);color:var(--ink);box-shadow:0 0 18px rgba(239,218,185,.28)}
+.archive{
+  margin:22px auto 0;background:linear-gradient(135deg,#f8efe3,#eee0cd);
+  border:1px solid #d7c09b;border-radius:24px;padding:clamp(18px,3vw,34px);
+  box-shadow:0 12px 45px rgba(8,14,30,.32),inset 0 0 0 5px rgba(255,255,255,.28);position:relative
+}
+.archive:before{content:"✧";position:absolute;top:12px;left:16px;color:#b99a6c;font-size:23px}
+.archive-head{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;margin:0 0 24px}
+.archive-head h2{margin:0;font-weight:400;font-size:25px;letter-spacing:2px}
+.archive-head p{margin:6px 0 0;color:var(--muted);font-size:13px}
+.archive-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.search{border:1px solid #cbb99f;border-radius:30px;padding:10px 15px;background:rgba(255,255,255,.35);min-width:min(240px,100%);color:var(--ink);font:inherit;outline:none}
+.search:focus{border-color:#9d8055;box-shadow:0 0 0 3px rgba(201,169,120,.16)}
+.action-btn{
+  border:1px solid #b99a6c;background:#35405d;color:#f8efe3;border-radius:25px;
+  padding:10px 16px;cursor:pointer;font:inherit;font-size:13px;transition:.2s
+}
+.action-btn:hover{background:#c9a978;color:#202943}
+.action-btn.secondary{background:transparent;color:#756044}
+.action-btn.secondary:hover{background:#e8d8c2}
+.group{padding:18px 0 22px;border-top:1px solid #ddcbb2}
+.group:first-of-type{border-top:0}
+.group-title{display:flex;align-items:center;gap:10px;margin-bottom:15px}
+.group-title .symbol{font-size:21px;color:#ad8d5e}
+.group-title h3{font-weight:400;font-size:20px;margin:0}
+.group-title small{color:#8b8178;margin-left:4px}
+.member-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:13px}
+.member{
+  display:flex;align-items:center;gap:12px;text-align:left;width:100%;min-width:0;
+  padding:10px;border:1px solid #d8c5aa;border-radius:15px;background:rgba(255,255,255,.38);
+  color:var(--ink);cursor:pointer;transition:.2s;box-shadow:0 3px 10px rgba(91,70,48,.06);font:inherit
+}
+.member:hover{transform:translateY(-3px);background:#fff8ee;box-shadow:0 8px 18px rgba(91,70,48,.12)}
+.avatar{width:70px;height:78px;flex:0 0 70px;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#8da2ce,#d7d9e4 65%,#f3dfc4);border:1px solid rgba(255,255,255,.85);color:#fff;font-size:29px}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.member-info{min-width:0}
+.member-name{font-size:17px;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.member-meta{font-size:12px;color:#817a78;line-height:1.7}
+.member-note{font-size:12px;color:#655e60;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.empty{padding:28px;text-align:center;color:#8c8177;display:none}
+footer{text-align:center;color:#e6d5bd;padding:28px 12px 38px;letter-spacing:2px}
+footer .welcome{font-style:italic;font-size:27px;letter-spacing:1px}
+footer small{display:block;margin-top:10px;font-size:12px;opacity:.8}
+
+/* 独立自介页面：仍在同一个 HTML 内，以页面切换方式呈现 */
+.page{display:none}
+.page.active{display:block}
+.profile-page-wrap{max-width:900px;margin:28px auto 40px;padding:0 16px}
+.profile-page{
+  background:linear-gradient(135deg,#f8efe3,#eee0cd);border:1px solid #d7c09b;
+  border-radius:24px;padding:clamp(20px,4vw,42px);
+  box-shadow:0 12px 45px rgba(8,14,30,.32),inset 0 0 0 5px rgba(255,255,255,.25);
+  position:relative
+}
+.back-btn{border:1px solid #cbb99f;background:rgba(255,255,255,.35);color:var(--ink);border-radius:25px;padding:9px 16px;font:inherit;cursor:pointer;margin-bottom:22px}
+.back-btn:hover{background:#e8d8c2}
+.profile-hero{display:flex;align-items:center;gap:24px;padding:8px 0 25px;border-bottom:1px solid var(--line)}
+.profile-hero-avatar{width:150px;height:170px;flex:0 0 150px;border-radius:18px;overflow:hidden;display:grid;place-items:center;background:linear-gradient(160deg,#8298c2,#e8d9c7);font-size:52px;color:white;border:2px solid white;box-shadow:0 5px 18px #cdbb9f}
+.profile-hero-avatar img{width:100%;height:100%;object-fit:cover}
+.profile-hero h2{font-size:clamp(27px,5vw,38px);font-weight:400;margin:0 0 10px;letter-spacing:2px}
+.profile-hero p{margin:6px 0;color:#81776f;font-size:14px;line-height:1.7}
+.profile-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.profile-tag{border:1px solid #cdb58f;border-radius:20px;padding:5px 11px;font-size:12px;color:#876d48;background:#fff8ed}
+.profile-content{display:grid;grid-template-columns:1fr 1fr;gap:0 28px}
+.profile-section{padding:19px 0 4px;border-bottom:1px solid rgba(216,197,169,.65);min-width:0}
+.profile-section h3{font-weight:400;font-size:17px;margin:0 0 8px;color:#9a7950}
+.profile-section div{font-size:14px;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere;min-height:24px}
+.profile-section.wide{grid-column:1/-1}
+.profile-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:24px}
+.modal{position:fixed;inset:0;background:rgba(10,16,30,.72);display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
+.modal.show{display:flex}
+.form-card{width:min(680px,100%);max-height:92vh;overflow:auto;background:var(--paper);border:1px solid var(--gold);border-radius:22px;padding:25px;position:relative;box-shadow:0 20px 70px #080d19}
+.close{position:absolute;right:16px;top:12px;border:0;background:transparent;color:var(--ink);font-size:27px;cursor:pointer}
+.form-card h2{font-weight:400;margin:0 0 6px}
+.form-card .hint{color:var(--muted);font-size:13px;margin:0 0 18px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 15px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field.wide{grid-column:1/-1}
+.field label{font-size:13px;color:#92754e}
+.field input,.field select,.field textarea{
+  width:100%;padding:11px 12px;border:1px solid #d8c5a9;border-radius:10px;
+  background:rgba(255,255,255,.48);color:#35405d;font:inherit;font-size:14px;outline:none
+}
+.field textarea{resize:vertical;min-height:75px}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#b99a6c;box-shadow:0 0 0 3px rgba(201,169,120,.13)}
+.image-preview{width:100px;height:112px;border-radius:13px;border:1px dashed #c9a978;display:grid;place-items:center;overflow:hidden;color:#9a7950;font-size:12px;background:rgba(255,255,255,.35)}
+.image-preview img{width:100%;height:100%;object-fit:cover}
+.form-footer{display:flex;justify-content:flex-end;gap:9px;margin-top:20px;flex-wrap:wrap}
+.danger{border-color:#bd8980;background:#8d514c;color:white}
+@media(max-width:650px){
+  header{min-height:285px;padding-top:18px}.nav{gap:12px;font-size:12px}.hero{margin-top:52px;display:block}
+  .signature{margin-top:20px;text-align:right;font-size:35px}.hero-stats{gap:18px}
+  .tabs{justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto}.tab{white-space:nowrap;padding:9px 15px}
+  .archive{border-radius:17px;padding:20px 14px}.archive-actions{width:100%}
+  .archive-actions .search{width:100%;min-width:0}.archive-actions .action-btn{flex:1}
+  .member-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .member{gap:8px;padding:8px}.avatar{width:54px;height:64px;flex-basis:54px}
+  .member-name{font-size:15px}.member-meta,.member-note{font-size:11px}
+  .profile-hero{align-items:flex-start;gap:15px}.profile-hero-avatar{width:105px;height:125px;flex-basis:105px}
+  .profile-content{grid-template-columns:1fr}.profile-section.wide{grid-column:auto}
+  .form-grid{grid-template-columns:1fr}.field.wide{grid-column:auto}
+}
+@media(max-width:370px){.member-grid{grid-template-columns:1fr}.nav{display:none}}
+</style>
+</head>
+<body>
+<header id="siteHeader">
+  <div class="topbar">
+    <div class="brand">✧　AUSTRALIS</div>
+    <nav class="nav"><a href="#" id="homeLink">⌂ 首页</a><a href="#members">✧ 成员档案</a><a href="#about">关于我们</a></nav>
+  </div>
+  <div class="hero">
+    <div>
+      <h1>MEMBER<br>ARCHIVE</h1>
+      <p class="subtitle">— 记录每一位，独一无二的你 —</p>
+      <div class="hero-stats">
+        <div>成员总数<strong id="memberCount">0</strong></div>
+        <div>档案分类<strong>05</strong></div>
+        <div>光是遇见，就很美好<strong>✦</strong></div>
+      </div>
+    </div>
+    <div class="signature">Australis</div>
+  </div>
+</header>
+
+<main id="homePage" class="page active">
+  <div id="members">
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-category="all">✧ 全部成员</button>
+      <button class="tab" data-category="普通成员">♧ 普通成员</button>
+      <button class="tab" data-category="想D崽崽">♡ 想 D 崽崽</button>
+      <button class="tab" data-category="游戏搭子">✦ 游戏搭子</button>
+      <button class="tab" data-category="聊天搭子">☾ 聊天搭子</button>
+      <button class="tab" data-category="其他需求">✧ 其他需求</button>
+    </div>
+    <section class="archive">
+      <div class="archive-head">
+        <div><h2 id="sectionTitle">✧ 全部成员</h2><p id="sectionDesc">这里是属于我们的，星光下的相遇。</p></div>
+        <div class="archive-actions">
+          <input class="search" id="search" type="search" placeholder="⌕ 搜索成员名字…">
+          <button class="action-btn" id="addMember">＋ 新增成员</button>
+          <button class="action-btn secondary" id="exportMembers">↓ 导出备份</button>
+          <button class="action-btn secondary" id="importTrigger">↑ 导入备份</button>
+          <input id="importFile" type="file" accept=".json,application/json" hidden>
+        </div>
+      </div>
+      <div id="groups"></div>
+      <div class="empty" id="empty">没有找到这位成员。</div>
+    </section>
+  </div>
+</main>
+
+<!-- 点击成员卡片后显示独立档案页面，不是弹窗 -->
+<main id="profilePage" class="page">
+  <div class="profile-page-wrap">
+    <article class="profile-page">
+      <button class="back-btn" id="backToList">← 返回成员档案馆</button>
+      <div class="profile-hero">
+        <div class="profile-hero-avatar" id="pAvatar">✧</div>
+        <div>
+          <h2 id="pName">成员昵称</h2>
+          <p id="pMeta">生日 · 星座 · MBTI</p>
+          <p id="pNote"></p>
+          <div class="profile-tags" id="pTags"></div>
+        </div>
+      </div>
+      <div class="profile-content">
+        <section class="profile-section wide"><h3>关于我</h3><div id="pIntro">还没有填写自我介绍。</div></section>
+        <section class="profile-section"><h3>喜欢与兴趣</h3><div id="pLikes">暂未填写</div></section>
+        <section class="profile-section"><h3>生日与个人资料</h3><div id="pDetails">暂未填写</div></section>
+        <section class="profile-section wide"><h3>雷点与相处方式</h3><div id="pBoundaries">暂未填写</div></section>
+        <section class="profile-section wide"><h3>想 D 的关系与要求</h3><div id="pRelations">暂未填写</div></section>
+        <section class="profile-section wide"><h3>其他想说的话</h3><div id="pExtra">暂未填写</div></section>
+      </div>
+      <div class="profile-actions">
+        <button class="action-btn" id="editMember">✎ 编辑这份档案</button>
+        <button class="action-btn secondary" id="deleteMember">删除成员</button>
+      </div>
+    </article>
+  </div>
+</main>
+
+<footer id="about">
+  <div class="welcome">— Welcome to Australis —</div>
+  <small>「在星海之中，与你相遇。」</small>
+</footer>
+
+<!-- 新增 / 编辑表单 -->
+<div class="modal" id="formModal" role="dialog" aria-modal="true" aria-label="成员资料表单">
+  <article class="form-card">
+    <button class="close" id="formClose" aria-label="关闭">×</button>
+    <h2 id="formTitle">✧ 创建成员档案</h2>
+    <p class="hint">填写资料，让大家认识你。关系分类会根据填写的需求自动判断。</p>
+    <form id="memberForm">
+      <div class="form-grid">
+        <div class="field"><label for="fName">成员昵称 *</label><input id="fName" name="name" required maxlength="40" placeholder="请输入昵称"></div>
+        <div class="field"><label for="fBirthday">生日</label><input id="fBirthday" name="birthday" placeholder="例如：6月12日"></div>
+        <div class="field"><label for="fZodiac">星座</label>
+          <select id="fZodiac" name="zodiac">
+            <option value="">请选择星座</option><option>白羊座</option><option>金牛座</option><option>双子座</option><option>巨蟹座</option><option>狮子座</option><option>处女座</option><option>天秤座</option><option>天蝎座</option><option>射手座</option><option>摩羯座</option><option>水瓶座</option><option>双鱼座</option>
+          </select>
+        </div>
+        <div class="field"><label for="fMbti">MBTI</label><input id="fMbti" name="mbti" maxlength="12" placeholder="例如：ENTP"></div>
+        <div class="field wide"><label for="fAvatar">光崽图片（从设备选择）</label><input id="fAvatar" name="avatar" type="file" accept="image/*"><div class="image-preview" id="imagePreview">✧ 图片预览</div></div>
+        <div class="field wide"><label for="fNote">个人备注 / 一句话介绍</label><input id="fNote" name="note" maxlength="100" placeholder="例如：热爱天空与音乐"></div>
+        <div class="field wide"><label for="fIntro">关于我</label><textarea id="fIntro" name="intro" placeholder="介绍一下自己……"></textarea></div>
+        <div class="field wide"><label for="fLikes">喜欢与兴趣</label><textarea id="fLikes" name="likes" placeholder="喜欢什么、有什么兴趣……"></textarea></div>
+        <div class="field wide"><label for="fBoundaries">雷点与相处方式</label><textarea id="fBoundaries" name="boundaries" placeholder="希望别人如何与你相处？"></textarea></div>
+        <div class="field wide"><label for="fRelations">想 D 的关系与要求</label><textarea id="fRelations" name="relations" placeholder="例如：想找崽崽、游戏搭子、聊天搭子，具体有什么要求……"></textarea></div>
+        <div class="field wide"><label for="fExtra">其他想说的话</label><textarea id="fExtra" name="extra" placeholder="其他补充……"></textarea></div>
+      </div>
+      <div class="form-footer">
+        <button class="action-btn secondary" type="button" id="cancelForm">取消</button>
+        <button class="action-btn" type="submit">✧ 保存成员档案</button>
+      </div>
+    </form>
+  </article>
+</div>
+
+<script>
+const STORAGE_KEY = "australis_member_archive_v1";
+const categoryNames = ["普通成员","想D崽崽","游戏搭子","聊天搭子","其他需求"];
+const categoryInfo = {
+  "普通成员":["✧","没有特别标注关系需求的成员们。"],
+  "想D崽崽":["♡","期待遇见愿意互相陪伴的崽崽。"],
+  "游戏搭子":["✦","一起跑图、冒险、分享游戏日常。"],
+  "聊天搭子":["☾","想找人分享日常、聊天与交换有趣想法。"],
+  "其他需求":["✧","每个人都有自己的交友期待。"]
+};
+const starterMembers = [
+  {id:"sample-1",name:"星野",birthday:"6月12日",zodiac:"双子座",mbti:"ENTP",avatar:"",note:"热爱天空与音乐",intro:"大家好！很高兴认识你们。",likes:"音乐、游戏、聊天",boundaries:"不喜欢被催促，尊重彼此的节奏。",relations:"目前没有特别的关系需求。",extra:"请多指教！"},
+  {id:"sample-2",name:"小鱼",birthday:"9月8日",zodiac:"处女座",mbti:"INFP",avatar:"",note:"喜欢小光与冒险！",intro:"一个慢热但熟了会很吵的人。",likes:"绘画、音乐、光遇",boundaries:"不喜欢突然的恶意玩笑。",relations:"暂时没有。",extra:""},
+  {id:"sample-3",name:"晚风",birthday:"3月20日",zodiac:"双鱼座",mbti:"ENTP",avatar:"",note:"一起看星星吧～",intro:"欢迎来找我聊天。",likes:"跑图、拍照、听歌",boundaries:"不喜欢冷暴力。",relations:"想找可以一起玩游戏的搭子。",extra:""},
+  {id:"sample-4",name:"阿柠",birthday:"8月3日",zodiac:"狮子座",mbti:"INFJ",avatar:"",note:"做个温柔的人。",intro:"有点慢热，熟悉之后会活跃很多。",likes:"阅读、摄影",boundaries:"希望互相尊重。",relations:"",extra:""},
+  {id:"sample-5",name:"奶糖",birthday:"4月16日",zodiac:"白羊座",mbti:"ENFP",avatar:"",note:"想找可爱崽崽",intro:"希望能认识有趣的人！",likes:"光遇、聊天、拍照",boundaries:"不接受强迫式相处。",relations:"想找崽崽：希望对方愿意聊天、一起玩，也能互相尊重。",extra:"具体相处方式可以慢慢商量。"},
+  {id:"sample-6",name:"岁岁",birthday:"10月2日",zodiac:"天秤座",mbti:"ISFP",avatar:"",note:"一起长大吧",intro:"比较温和，熟了会话多。",likes:"音乐、风景、游戏",boundaries:"不喜欢被忽略感受。",relations:"想找崽崽，希望彼此都舒服自在。",extra:""},
+  {id:"sample-7",name:"墨染",birthday:"1月22日",zodiac:"水瓶座",mbti:"ISTP",avatar:"",note:"游戏不孤单",intro:"上线时间不固定。",likes:"跑图、探索地图",boundaries:"不太喜欢被连续催消息。",relations:"想找固定游戏搭子。",extra:""},
+  {id:"sample-8",name:"月见",birthday:"7月7日",zodiac:"巨蟹座",mbti:"INTP",avatar:"",note:"偶尔出现的夜猫子",intro:"喜欢有话直说，也喜欢奇奇怪怪的话题。",likes:"音乐、写作、游戏",boundaries:"尊重隐私，不随意传播聊天内容。",relations:"想找聊天搭子，也欢迎扩列。",extra:""}
+];
+
+let members = loadMembers();
+let currentCategory = "all";
+let currentMemberId = null;
+let editingId = null;
+let pendingAvatar = "";
+let existingAvatar = "";
+
+function loadMembers(){
+  try{
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if(saved){
+      const parsed = JSON.parse(saved);
+      if(Array.isArray(parsed)) return parsed;
+    }
+  }catch(e){ console.warn("读取本地档案失败",e); }
+  return starterMembers.map(m=>({...m}));
+}
+function saveMembers(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(members));
+    return true;
+  }catch(e){
+    alert("保存失败：浏览器储存空间可能不足。建议先导出备份，或缩小成员图片后再试。");
+    return false;
+  }
+}
+function makeId(){
+  return "m-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2,8);
+}
+function escapeHTML(value){
+  return String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function getCategories(m){
+  const text = [m.relations,m.note,m.intro].join(" ").toLowerCase();
+  const cats = [];
+  if(/想\s*d|找崽|崽崽|收崽|找孩子|找监护|监护人/.test(text)) cats.push("想D崽崽");
+  if(/游戏搭子|跑图搭子|固玩|一起玩|游戏伙伴|游戏好友/.test(text)) cats.push("游戏搭子");
+  if(/聊天搭子|聊天|唠嗑|话搭子|扩列/.test(text)) cats.push("聊天搭子");
+  if(/其他需求|其他关系|其他交友|特别需求/.test(text)) cats.push("其他需求");
+  return cats.length ? cats : ["普通成员"];
+}
+function avatarHTML(m){
+  return m.avatar
+    ? `<img src="${m.avatar}" alt="${escapeHTML(m.name)}的光崽">`
+    : `<span>✧</span>`;
+}
+function memberCard(m){
+  return `<button class="member" type="button" data-id="${escapeHTML(m.id)}" aria-label="查看${escapeHTML(m.name)}的个人自介">
+    <div class="avatar">${avatarHTML(m)}</div>
+    <div class="member-info">
+      <div class="member-name">${escapeHTML(m.name)} ✦</div>
+      <div class="member-meta">${escapeHTML(m.zodiac||"未填写")}　${escapeHTML(m.mbti||"")}</div>
+      <div class="member-note">${escapeHTML(m.note||"欢迎来认识我")}</div>
+    </div>
+  </button>`;
+}
+function render(){
+  const keyword = document.getElementById("search").value.trim().toLowerCase();
+  const visible = members.filter(m=>{
+    const cats = getCategories(m);
+    const categoryMatch = currentCategory==="all" || cats.includes(currentCategory);
+    const searchMatch = !keyword || [m.name,m.note,m.intro,m.relations].join(" ").toLowerCase().includes(keyword);
+    return categoryMatch && searchMatch;
+  });
+  document.getElementById("memberCount").textContent = members.length;
+  document.getElementById("empty").style.display = visible.length ? "none" : "block";
+
+  if(currentCategory==="all"){
+    document.getElementById("sectionTitle").textContent = "✧ 全部成员";
+    document.getElementById("sectionDesc").textContent = "这里是属于我们的，星光下的相遇。";
+    document.getElementById("groups").innerHTML = categoryNames.map(cat=>{
+      const list = visible.filter(m=>getCategories(m).includes(cat));
+      if(!list.length) return "";
+      return `<section class="group">
+        <div class="group-title"><span class="symbol">${categoryInfo[cat][0]}</span><h3>${cat}</h3><small>共 ${list.length} 位</small></div>
+        <div class="member-grid">${list.map(memberCard).join("")}</div>
+      </section>`;
+    }).join("");
+  }else{
+    document.getElementById("sectionTitle").textContent = categoryInfo[currentCategory][0] + " " + currentCategory;
+    document.getElementById("sectionDesc").textContent = categoryInfo[currentCategory][1];
+    document.getElementById("groups").innerHTML = visible.length
+      ? `<section class="group"><div class="member-grid">${visible.map(memberCard).join("")}</div></section>` : "";
+  }
+}
+function showPage(page){
+  document.getElementById("homePage").classList.toggle("active",page==="home");
+  document.getElementById("profilePage").classList.toggle("active",page==="profile");
+  document.getElementById("siteHeader").style.display = page==="home" ? "" : "none";
+  document.getElementById("about").style.display = page==="home" ? "" : "none";
+  window.scrollTo(0,0);
+}
+function openProfile(id, updateHistory=true){
+  const m = members.find(x=>x.id===id);
+  if(!m) return;
+  currentMemberId = id;
+  document.getElementById("pAvatar").innerHTML = avatarHTML(m);
+  document.getElementById("pName").textContent = m.name || "未命名成员";
+  document.getElementById("pMeta").textContent = [m.birthday,m.zodiac,m.mbti].filter(Boolean).join(" · ") || "尚未填写个人资料";
+  document.getElementById("pNote").textContent = m.note || "";
+  document.getElementById("pTags").innerHTML = getCategories(m).map(c=>`<span class="profile-tag">${escapeHTML(c)}</span>`).join("");
+  document.getElementById("pIntro").textContent = m.intro || "暂未填写";
+  document.getElementById("pLikes").textContent = m.likes || "暂未填写";
+  document.getElementById("pDetails").textContent = `生日：${m.birthday||"未填写"}\n星座：${m.zodiac||"未填写"}\nMBTI：${m.mbti||"未填写"}`;
+  document.getElementById("pBoundaries").textContent = m.boundaries || "暂未填写";
+  document.getElementById("pRelations").textContent = m.relations || "暂未填写";
+  document.getElementById("pExtra").textContent = m.extra || "暂未填写";
+  showPage("profile");
+  if(updateHistory) history.pushState({page:"profile",id}, "", "#member-"+encodeURIComponent(id));
+}
+function goHome(updateHistory=true){
+  currentMemberId = null;
+  showPage("home");
+  if(updateHistory) history.pushState({page:"home"}, "", location.pathname + location.search);
+}
+function openForm(id=null){
+  editingId = id;
+  const form = document.getElementById("memberForm");
+  form.reset();
+  pendingAvatar = "";
+  const m = id ? members.find(x=>x.id===id) : null;
+  existingAvatar = m?.avatar || "";
+  document.getElementById("formTitle").textContent = m ? "✧ 编辑成员档案" : "✧ 创建成员档案";
+  const fields = ["name","birthday","zodiac","mbti","note","intro","likes","boundaries","relations","extra"];
+  fields.forEach(key=>{
+    const el = form.elements[key];
+    if(el) el.value = m?.[key] || "";
+  });
+  renderImagePreview(existingAvatar);
+  document.getElementById("formModal").classList.add("show");
+}
+function closeForm(){
+  document.getElementById("formModal").classList.remove("show");
+  editingId = null; pendingAvatar = ""; existingAvatar = "";
+}
+function renderImagePreview(src){
+  const box = document.getElementById("imagePreview");
+  box.innerHTML = src ? `<img src="${src}" alt="光崽图片预览">` : "✧ 图片预览";
+}
+function readImage(file){
+  return new Promise((resolve,reject)=>{
+    if(!file || !file.type.startsWith("image/")) return reject(new Error("请选择图片文件"));
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      const img = new Image();
+      img.onload = ()=>{
+        const maxSide = 900;
+        const scale = Math.min(1,maxSide/Math.max(img.width,img.height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.max(1,Math.round(img.width*scale));
+        canvas.height = Math.max(1,Math.round(img.height*scale));
+        canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
+        resolve(canvas.toDataURL("image/jpeg",0.82));
+      };
+      img.onerror = ()=>reject(new Error("图片读取失败"));
+      img.src = reader.result;
+    };
+    reader.onerror = ()=>reject(new Error("图片读取失败"));
+    reader.readAsDataURL(file);
+  });
+}
+document.getElementById("groups").addEventListener("click",e=>{
+  const card = e.target.closest(".member");
+  if(card) openProfile(card.dataset.id);
+});
+document.getElementById("tabs").addEventListener("click",e=>{
+  const btn = e.target.closest(".tab");
+  if(!btn) return;
+  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b===btn));
+  currentCategory = btn.dataset.category;
+  render();
+});
+document.getElementById("search").addEventListener("input",render);
+document.getElementById("addMember").addEventListener("click",()=>openForm());
+document.getElementById("editMember").addEventListener("click",()=>openForm(currentMemberId));
+document.getElementById("backToList").addEventListener("click",()=>goHome());
+document.getElementById("homeLink").addEventListener("click",e=>{e.preventDefault();goHome();});
+document.getElementById("formClose").addEventListener("click",closeForm);
+document.getElementById("cancelForm").addEventListener("click",closeForm);
+document.getElementById("formModal").addEventListener("click",e=>{if(e.target.id==="formModal")closeForm();});
+document.getElementById("fAvatar").addEventListener("change",async e=>{
+  const file=e.target.files[0];
+  if(!file) return;
+  try{
+    pendingAvatar=await readImage(file);
+    renderImagePreview(pendingAvatar);
+  }catch(err){alert(err.message);}
+});
+document.getElementById("memberForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const form=e.currentTarget;
+  const data=Object.fromEntries(new FormData(form).entries());
+  const old=editingId ? members.find(m=>m.id===editingId) : null;
+  const member={
+    id:old?.id || makeId(),
+    name:data.name.trim(),
+    birthday:data.birthday.trim(),
+    zodiac:data.zodiac,
+    mbti:data.mbti.trim().toUpperCase(),
+    note:data.note.trim(),
+    intro:data.intro.trim(),
+    likes:data.likes.trim(),
+    boundaries:data.boundaries.trim(),
+    relations:data.relations.trim(),
+    extra:data.extra.trim(),
+    avatar:pendingAvatar || existingAvatar || ""
+  };
+  if(!member.name){alert("请填写成员昵称。");return;}
+  if(old) members=members.map(m=>m.id===old.id?member:m);
+  else members.push(member);
+  if(!saveMembers()) return;
+  closeForm();
+  render();
+  if(old) openProfile(member.id,false);
+  else alert("成员档案已保存！");
+});
+document.getElementById("deleteMember").addEventListener("click",()=>{
+  const m=members.find(x=>x.id===currentMemberId);
+  if(!m) return;
+  if(!confirm(`确定要删除「${m.name}」的档案吗？此操作无法自动撤销。`)) return;
+  members=members.filter(x=>x.id!==currentMemberId);
+  saveMembers();
+  goHome();
+  render();
+});
+document.getElementById("exportMembers").addEventListener("click",()=>{
+  const backup={app:"Australis Member Archive",version:1,exportedAt:new Date().toISOString(),members};
+  const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download="Australis-成员档案备份-"+new Date().toISOString().slice(0,10)+".json";
+  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+});
+document.getElementById("importTrigger").addEventListener("click",()=>document.getElementById("importFile").click());
+document.getElementById("importFile").addEventListener("change",async e=>{
+  const file=e.target.files[0]; if(!file)return;
+  try{
+    const parsed=JSON.parse(await file.text());
+    const incoming=Array.isArray(parsed)?parsed:parsed.members;
+    if(!Array.isArray(incoming) || !incoming.every(m=>m && typeof m.name==="string")){
+      throw new Error("备份文件格式不正确。");
+    }
+    if(!confirm("导入备份会替换当前成员名单，建议先导出目前的资料。确定继续吗？")) return;
+    members=incoming.map(m=>({...m,id:m.id||makeId()}));
+    if(saveMembers()){render();goHome();alert("备份导入成功！");}
+  }catch(err){alert(err.message||"无法读取备份文件。");}
+  finally{e.target.value="";}
+});
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape") closeForm();
+});
+window.addEventListener("popstate",()=>{
+  const match=location.hash.match(/^#member-(.+)$/);
+  if(match){
+    let id;try{id=decodeURIComponent(match[1]);}catch(_){id=null;}
+    if(id && members.some(m=>m.id===id)) openProfile(id,false);
+    else {showPage("home");}
+  }else showPage("home");
+});
+
+// 若通过个人档案链接重新打开页面，也能直接进入对应成员自介。
+(function restoreRoute(){
+  const match=location.hash.match(/^#member-(.+)$/);
+  if(match){
+    let id;try{id=decodeURIComponent(match[1]);}catch(_){id=null;}
+    if(id && members.some(m=>m.id===id)) openProfile(id,false);
+    else showPage("home");
+  }else showPage("home");
+})();
+render();
+</script>
+</body>
+</html
